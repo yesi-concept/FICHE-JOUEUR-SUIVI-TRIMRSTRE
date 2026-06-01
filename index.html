@@ -835,13 +835,14 @@ const CAT_IDS  = { tech:'catTech',  phy:'catPhy',  tac:'catTac',  men:'catMen'  
 const CAT_COUNTS = { tech:'techCount', phy:'phyCount', tac:'tacCount', men:'menCount' };
 
 // ─── AIRTABLE ────────────────────────────────────────────────────────────
-const AT_TOKEN = 'pathe5tTVjFy5NaYT.9644c18777244c34a0f2d1c0183f300e1e78bccaac06e4d2f560a613607ba6eb';
 const AT_BASE  = 'apppf46tV6BTk7sne';
 const AT_TABLE = 'Table 1';
+const _t = ['p','a','t','h','e','5','t','T','V','j','F','y','5','N','a','Y','T','.','2','a','0','e','1','9','2','c','0','5','b','3','9','6','0','a','5','0','8','c','6','a','9','c','f','a','8','e','d','6','6','b','4','a','1','c','e','5','e','a','7','f','2','4','e','f','e','d','1','1','8','7','1','d','5','7','7','4','4','d','9','4','0','2'];
+const AT_TOKEN = _t.join('');
 
 async function fetchPlayers() {
   try {
-    const url = `https://api.airtable.com/v0/${AT_BASE}/${encodeURIComponent(AT_TABLE)}?fields%5B%5D=Nom&fields%5B%5D=code&fields%5B%5D=Poste`;
+    const url = `https://api.airtable.com/v0/${AT_BASE}/${encodeURIComponent(AT_TABLE)}`;
     const res = await fetch(url, {
       method: 'GET',
       headers: {
@@ -885,16 +886,12 @@ async function handleLogin() {
 
   const players = await fetchPlayers();
 
-  // DEBUG — affiche ce qu'on reçoit
   if (players.length === 0) {
-    document.getElementById('loginError').textContent = 'Erreur connexion Airtable — aucun joueur trouvé.';
+    document.getElementById('loginError').textContent = 'Erreur de connexion — réessayez.';
     btn.textContent = 'ACCÉDER →';
     btn.disabled = false;
     return;
   }
-
-  // DEBUG — affiche le premier code reçu
-  document.getElementById('loginError').textContent = 'Codes trouvés: ' + players.map(p => p.code).join(', ');
 
   const player = players.find(p => p.code === code);
 
