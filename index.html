@@ -834,20 +834,21 @@ const CAT_TAGS = { tech:'tag-tech', phy:'tag-phy', tac:'tag-tac', men:'tag-men' 
 const CAT_IDS  = { tech:'catTech',  phy:'catPhy',  tac:'catTac',  men:'catMen'  };
 const CAT_COUNTS = { tech:'techCount', phy:'phyCount', tac:'tacCount', men:'menCount' };
 
-// ─── GOOGLE SHEETS ───────────────────────────────────────────────────────
-const SHEET_ID = '1fEUowabO9SZ06fa9Xk9bQsqZ3m-r-f-96lPp6VGcEbc';
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+// ─── AIRTABLE ────────────────────────────────────────────────────────────
+const AT_TOKEN = 'pathe5tTVjFy5NaYT.9644c18777244c34a0f2d1c0183f300e1e78bccaac06e4d2f560a613607ba6eb';
+const AT_BASE  = 'apppf46tV6BTk7sne';
+const AT_TABLE = 'Table%201';
 
 async function fetchPlayers() {
   try {
-    const res = await fetch(SHEET_URL);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-    return rows.map(row => ({
-      name: row.c[0] ? row.c[0].v : '',
-      code: row.c[1] ? String(row.c[1].v).trim().toUpperCase() : '',
-      poste: row.c[2] ? String(row.c[2].v).trim() : ''
+    const res = await fetch(`https://api.airtable.com/v0/${AT_BASE}/${AT_TABLE}`, {
+      headers: { Authorization: `Bearer ${AT_TOKEN}` }
+    });
+    const data = await res.json();
+    return data.records.map(r => ({
+      name:  r.fields['Nom']   || r.fields['nom']   || '',
+      code:  String(r.fields['code']  || '').trim().toUpperCase(),
+      poste: String(r.fields['Poste'] || r.fields['poste'] || '').trim()
     })).filter(p => p.code && p.poste);
   } catch(e) { return []; }
 }
@@ -1134,22 +1135,22 @@ function renderAdmin() {
     <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--gold);margin-bottom:12px;">📋 GÉRER LES JOUEURS</div>
       <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">
-        Les accès joueurs sont gérés depuis ta <strong style="color:var(--text);">Google Sheet</strong>.<br>
+        Les accès joueurs sont gérés depuis ta <strong style="color:var(--text);">base Airtable</strong>.<br>
         Ajoute ou supprime une ligne = actif immédiatement.
       </div>
       <div style="background:var(--input-bg);border-radius:8px;padding:14px;margin-bottom:14px;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Structure de la Sheet</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Structure de la table</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
-          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">A — nom<br><span style="color:var(--muted);font-weight:400;">Kais Lfareh</span></div>
-          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">B — code<br><span style="color:var(--gold);font-weight:400;">KAIS25</span></div>
-          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">C — poste<br><span style="color:var(--muted);font-weight:400;">DC</span></div>
+          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">Nom<br><span style="color:var(--muted);font-weight:400;">Kais Lfareh</span></div>
+          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">code<br><span style="color:var(--gold);font-weight:400;">KAIS25</span></div>
+          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">Poste<br><span style="color:var(--muted);font-weight:400;">DC</span></div>
         </div>
       </div>
       <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
         <strong style="color:var(--text);">Codes postes valides :</strong><br>
         DC · LAT · MDef · MRel · MC · Ailier · AP
       </div>
-      <a href="https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit" target="_blank"
+      <a href="https://airtable.com/${AT_BASE}" target="_blank"
         style="display:block;width:100%;padding:14px;background:var(--gold);color:#111;border:none;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;text-align:center;text-decoration:none;">
         OUVRIR LA GOOGLE SHEET →
       </a>
