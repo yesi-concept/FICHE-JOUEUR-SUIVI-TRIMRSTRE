@@ -378,6 +378,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; h
       <button class="logout-btn" onclick="logout()">Déconnexion</button>
       <div class="poste-badge" id="posteBadge"><span id="posteEmoji">🛡️</span> POSTE</div>
       <h1 id="ficheTitle">POSTE <em>—</em></h1>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);letter-spacing:2px;margin-bottom:3px;" id="fichePlayerName"></div>
       <div class="header-sub" id="ficheSub">Référentiel des qualités requises</div>
     </div>
     <div class="spacer"></div>
@@ -944,7 +945,10 @@ function loadFiche(poste, playerName) {
   document.getElementById('evalSub').textContent = meta.label + ' — Évaluation individuelle';
   document.getElementById('evalScoreLabel').textContent = 'Score Global — ' + meta.abbr;
   document.getElementById('suiviSub').textContent = 'Auto-évaluation trimestrielle — ' + meta.abbr;
-  if (playerName) document.getElementById('evalNom').value = playerName;
+  if (playerName) {
+    document.getElementById('evalNom').value = playerName;
+    document.getElementById('fichePlayerName').textContent = playerName.toUpperCase();
+  }
 
   // Intro
   document.getElementById('ficheIntro').textContent = data.intro;
@@ -1169,9 +1173,9 @@ function renderAdmin() {
         <strong style="color:var(--text);">Codes postes valides :</strong><br>
         DC · LAT · MDef · MRel · MC · Ailier · AP
       </div>
-      <a href="https://airtable.com/${AT_BASE}" target="_blank"
+      <a href="https://airtable.com/apppf46tV6BTk7sne" target="_blank"
         style="display:block;width:100%;padding:14px;background:var(--gold);color:#111;border:none;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;text-align:center;text-decoration:none;">
-        OUVRIR LA GOOGLE SHEET →
+        OUVRIR AIRTABLE →
       </a>
     </div>
 
