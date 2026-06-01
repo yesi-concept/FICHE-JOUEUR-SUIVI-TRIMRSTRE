@@ -885,12 +885,16 @@ async function handleLogin() {
 
   const players = await fetchPlayers();
 
+  // DEBUG — affiche ce qu'on reçoit
   if (players.length === 0) {
-    document.getElementById('loginError').textContent = 'Erreur de connexion — réessayez dans quelques secondes.';
+    document.getElementById('loginError').textContent = 'Erreur connexion Airtable — aucun joueur trouvé.';
     btn.textContent = 'ACCÉDER →';
     btn.disabled = false;
     return;
   }
+
+  // DEBUG — affiche le premier code reçu
+  document.getElementById('loginError').textContent = 'Codes trouvés: ' + players.map(p => p.code).join(', ');
 
   const player = players.find(p => p.code === code);
 
