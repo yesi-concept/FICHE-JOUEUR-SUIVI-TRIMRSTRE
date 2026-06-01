@@ -837,20 +837,30 @@ const CAT_COUNTS = { tech:'techCount', phy:'phyCount', tac:'tacCount', men:'menC
 // ─── AIRTABLE ────────────────────────────────────────────────────────────
 const AT_TOKEN = 'pathe5tTVjFy5NaYT.9644c18777244c34a0f2d1c0183f300e1e78bccaac06e4d2f560a613607ba6eb';
 const AT_BASE  = 'apppf46tV6BTk7sne';
-const AT_TABLE = 'Table%201';
+const AT_TABLE = 'Table 1';
 
 async function fetchPlayers() {
   try {
-    const res = await fetch(`https://api.airtable.com/v0/${AT_BASE}/${AT_TABLE}`, {
-      headers: { Authorization: `Bearer ${AT_TOKEN}` }
+    const url = `https://api.airtable.com/v0/${AT_BASE}/${encodeURIComponent(AT_TABLE)}?fields%5B%5D=Nom&fields%5B%5D=code&fields%5B%5D=Poste`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${AT_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      mode: 'cors'
     });
+    if (!res.ok) return [];
     const data = await res.json();
     return data.records.map(r => ({
-      name:  r.fields['Nom']   || r.fields['nom']   || '',
+      name:  r.fields['Nom']   || '',
       code:  String(r.fields['code']  || '').trim().toUpperCase(),
-      poste: String(r.fields['Poste'] || r.fields['poste'] || '').trim()
+      poste: String(r.fields['Poste'] || '').trim()
     })).filter(p => p.code && p.poste);
-  } catch(e) { return []; }
+  } catch(e) {
+    console.error('Airtable error:', e);
+    return [];
+  }
 }
 
 // ─── LOGIN ───────────────────────────────────────────────────────────────
@@ -874,6 +884,14 @@ async function handleLogin() {
   btn.disabled = true;
 
   const players = await fetchPlayers();
+
+  if (players.length === 0) {
+    document.getElementById('loginError').textContent = 'Erreur de connexion — réessayez dans quelques secondes.';
+    btn.textContent = 'ACCÉDER →';
+    btn.disabled = false;
+    return;
+  }
+
   const player = players.find(p => p.code === code);
 
   btn.textContent = 'ACCÉDER →';
