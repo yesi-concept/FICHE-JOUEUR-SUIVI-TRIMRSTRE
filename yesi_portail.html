@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y.E.S.I CONCEPT — Fiches de Poste</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C; --gold-light: #E2C170; --gold-dark: #A07830;
+  --bg: #F5F5F5; --white: #FFFFFF; --card: #FAFAFA; --input-bg: #EFEFEF;
+  --text: #111111; --muted: #777; --border: rgba(0,0,0,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; min-height:100vh; }
+
+/* ─── SCREENS ─── */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:block; }
+
+/* ─── LOGIN ─── */
+#screen-login {
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:30px 20px;
+  background: var(--white);
+}
+#screen-login.active { display:flex; }
+
+.login-logo {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:14px;
+  letter-spacing:4px;
+  color:var(--gold);
+  margin-bottom:6px;
+  text-align:center;
+}
+
+.login-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:42px;
+  letter-spacing:3px;
+  color:var(--text);
+  line-height:1;
+  text-align:center;
+  margin-bottom:4px;
+}
+
+.login-title em { color:var(--gold); font-style:normal; }
+
+.login-sub {
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.login-card {
+  width:100%;
+  max-width:360px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+}
+
+.login-card label {
+  display:block;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+
+.code-input {
+  width:100%;
+  background:var(--white);
+  border:2px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px;
+  letter-spacing:6px;
+  padding:14px 16px;
+  outline:none;
+  transition:border-color 0.2s;
+  text-align:center;
+  text-transform:uppercase;
+}
+
+.code-input:focus { border-color:var(--gold); }
+.code-input::placeholder { color:#CCC; font-size:20px; letter-spacing:3px; }
+
+.login-error {
+  margin-top:8px;
+  font-size:12px;
+  color:#E74C3C;
+  text-align:center;
+  min-height:18px;
+  font-weight:600;
+}
+
+.btn-login {
+  width:100%;
+  margin-top:16px;
+  padding:16px;
+  background:var(--gold);
+  color:#111;
+  border:none;
+  border-radius:8px;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;
+  letter-spacing:3px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+
+.btn-login:hover { background:var(--gold-light); }
+.btn-login:active { transform:scale(0.98); }
+
+.login-admin-link {
+  margin-top:20px;
+  font-size:11px;
+  color:var(--muted);
+  cursor:pointer;
+  text-align:center;
+  text-decoration:underline;
+  letter-spacing:1px;
+}
+
+/* ─── NAV ─── */
+.nav-tabs { display:flex; background:var(--white); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; }
+.nav-tab { flex:1; padding:14px 8px; text-align:center; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted); cursor:pointer; border-bottom:3px solid transparent; transition:all 0.25s; }
+.nav-tab.active { color:var(--gold); border-bottom-color:var(--gold); background:rgba(201,168,76,0.05); }
+
+/* FICHE HEADER */
+.header { background:linear-gradient(135deg,#FFFFFF 0%,#F5F5F5 100%); padding:22px 20px 16px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+.header::before { content:attr(data-abbr); position:absolute; right:-10px; top:-10px; font-family:'Bebas Neue',sans-serif; font-size:120px; color:rgba(201,168,76,0.05); line-height:1; pointer-events:none; }
+.poste-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(201,168,76,0.1); border:1px solid var(--gold-dark); border-radius:4px; padding:4px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; color:var(--gold); text-transform:uppercase; margin-bottom:8px; }
+.header h1 { font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:2px; color:var(--text); line-height:1; margin-bottom:4px; }
+.header h1 em { color:var(--gold); font-style:normal; }
+.header-sub { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+
+/* LOGOUT */
+.logout-btn { position:absolute; top:16px; right:16px; background:transparent; border:1px solid var(--border); border-radius:6px; padding:6px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--muted); cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+.logout-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+/* FICHE CONTENT */
+.fiche-page { display:none; }
+.fiche-page.active { display:block; }
+
+.spacer { height:14px; }
+.pb-safe { padding-bottom:30px; }
+
+/* SECTIONS */
+.section { margin:0 16px 16px; }
+.section-title { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.section-title h2 { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1.5px; color:var(--gold); }
+.section-title .line { flex:1; height:1px; background:var(--border); }
+.section-title .count { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; color:var(--muted); }
+
+/* REF GRID */
+.ref-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 16px 14px; }
+.ref-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; }
+.ref-card-title { font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.ref-card-title.tech { color:#5B9BD5; }
+.ref-card-title.phy  { color:#2ECC71; }
+.ref-card-title.tac  { color:#E74C3C; }
+.ref-card-title.men  { color:var(--gold); }
+.ref-item { font-size:12px; color:var(--muted); padding:3px 0; display:flex; align-items:center; gap:6px; }
+.ref-item::before { content:'—'; font-size:10px; color:rgba(0,0,0,0.15); }
+
+/* YESI BLOCKS */
+.yesi-block { background:var(--card); border-radius:8px; border:1px solid var(--border); overflow:hidden; }
+.yesi-header { display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border); }
+.yesi-lettre { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; line-height:1; }
+.yesi-title-wrap .yesi-title { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+.yesi-title-wrap .yesi-sous { font-size:10px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.yesi-text { padding:12px 14px; font-size:12px; color:var(--muted); line-height:1.7; }
+
+/* INTRO */
+.intro-qual { margin:0 16px 14px; padding:12px 14px; background:rgba(201,168,76,0.05); border-left:3px solid var(--gold-dark); border-radius:0 6px 6px 0; font-size:12px; color:var(--muted); line-height:1.5; }
+
+/* QUALITY CARDS */
+.quality-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px; margin-bottom:10px; transition:all 0.2s; position:relative; overflow:hidden; }
+.quality-card.validated { border-color:rgba(201,168,76,0.4); background:linear-gradient(135deg,var(--card) 0%,rgba(201,168,76,0.04) 100%); }
+.quality-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--border); transition:background 0.2s; }
+.quality-card.validated::before { background:var(--gold); }
+.card-top { display:flex; align-items:flex-start; gap:12px; margin-bottom:10px; }
+.validate-btn { width:32px; height:32px; border-radius:50%; border:2px solid rgba(201,168,76,0.3); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.2s; font-size:14px; color:var(--muted); }
+.validate-btn:active { transform:scale(0.9); }
+.quality-card.validated .validate-btn { background:var(--gold); border-color:var(--gold); color:#111; font-weight:bold; }
+.card-info { flex:1; min-width:0; }
+.card-name { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:0.5px; color:var(--text); margin-bottom:2px; }
+.card-desc { font-size:12px; color:var(--muted); line-height:1.4; }
+.card-tag { font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:2px 8px; border-radius:3px; flex-shrink:0; }
+.tag-tech { background:rgba(91,155,213,0.15); color:#5B9BD5; }
+.tag-phy  { background:rgba(46,204,113,0.15); color:#2ECC71; }
+.tag-tac  { background:rgba(231,76,60,0.15);  color:#E74C3C; }
+.tag-men  { background:rgba(201,168,76,0.15); color:var(--gold); }
+.note-row { display:flex; align-items:center; gap:10px; }
+.note-label { font-size:11px; color:var(--muted); font-weight:600; white-space:nowrap; }
+.slider-wrap { flex:1; }
+input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; background:var(--input-bg); outline:none; cursor:pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--gold); cursor:pointer; border:2px solid #fff; }
+.note-value { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--gold); width:28px; text-align:center; }
+
+/* SCORE */
+.score-global { background:linear-gradient(135deg,var(--card),var(--input-bg)); border:1px solid var(--border); border-radius:8px; padding:20px; margin:0 16px 14px; text-align:center; position:relative; overflow:hidden; }
+.score-global::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center,rgba(201,168,76,0.08) 0%,transparent 70%); }
+.score-label { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.score-number { font-family:'Bebas Neue',sans-serif; font-size:72px; color:var(--gold); line-height:1; }
+.score-max { font-size:20px; color:var(--muted); font-family:'Bebas Neue',sans-serif; }
+.score-bar-wrap { margin-top:12px; height:6px; background:var(--input-bg); border-radius:3px; overflow:hidden; }
+.score-bar-fill { height:100%; background:linear-gradient(90deg,var(--gold-dark),var(--gold-light)); border-radius:3px; transition:width 0.5s ease; }
+.score-cats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px; }
+.cat-score { background:var(--input-bg); border-radius:6px; padding:8px 6px; text-align:center; }
+.cat-score-val { font-family:'Bebas Neue',sans-serif; font-size:24px; line-height:1; }
+.cat-score-label { font-size:10px; color:var(--muted); font-weight:600; margin-top:2px; }
+
+/* ATHLETE BLOCK */
+.athlete-block { background:var(--card); margin:14px 16px; border-radius:8px; border:1px solid var(--border); padding:14px 16px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.field-group label { display:block; font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
+.field-group input { width:100%; background:#FFFFFF; border:1px solid rgba(0,0,0,0.15); border-radius:4px; color:#111; font-family:'Barlow',sans-serif; font-size:13px; padding:7px 10px; outline:none; transition:border-color 0.2s; }
+.field-group input:focus { border-color:var(--gold); }
+
+/* LEGEND */
+.legend { display:flex; gap:14px; flex-wrap:wrap; margin:0 16px 14px; }
+.legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--muted); }
+.legend-dot { width:8px; height:8px; border-radius:2px; }
+
+/* SUIVI */
+.trimestre-block { background:var(--card); border:1px solid var(--border); border-radius:8px; margin:0 16px 14px; overflow:hidden; }
+.trimestre-header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); cursor:pointer; }
+.trimestre-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; color:var(--gold); }
+.trimestre-badge { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; background:rgba(201,168,76,0.1); color:var(--gold); }
+.trimestre-body { padding:14px 16px; }
+.auto-eval-grid { display:grid; gap:12px; }
+.auto-item { display:flex; align-items:center; gap:10px; }
+.auto-item-name { flex:1; font-size:12px; color:var(--text); font-weight:500; }
+.auto-item-prev { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--muted); width:22px; text-align:center; }
+.trend-btns { display:flex; gap:4px; }
+.trend-btn { width:30px; height:30px; border-radius:6px; border:1px solid rgba(0,0,0,0.12); background:var(--input-bg); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; transition:all 0.15s; color:var(--muted); }
+.trend-btn.up.active    { background:rgba(46,204,113,0.15); border-color:#2ECC71; color:#2ECC71; }
+.trend-btn.equal.active { background:rgba(91,155,213,0.15); border-color:#5B9BD5; color:#5B9BD5; }
+.trend-btn.down.active  { background:rgba(231,76,60,0.15);  border-color:#E74C3C; color:#E74C3C; }
+.auto-new-note { font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--gold); width:28px; text-align:center; }
+.comment-block { margin-top:14px; }
+.comment-block label { display:block; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.comment-block textarea { width:100%; background:#FFFFFF; border:1px solid rgba(0,0,0,0.15); border-radius:6px; color:#111; font-family:'Barlow',sans-serif; font-size:13px; padding:10px; outline:none; resize:none; min-height:70px; }
+
+/* COMPARE */
+.compare-block { margin:0 16px 14px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
+.compare-title { font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+.compare-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.compare-row:last-child { margin-bottom:0; }
+.compare-name { font-size:11px; color:var(--text); width:80px; flex-shrink:0; }
+.compare-bars { flex:1; display:flex; gap:3px; }
+.compare-bar { height:6px; border-radius:3px; min-width:4px; }
+.bar-t1 { background:rgba(201,168,76,0.3); }
+.bar-t2 { background:rgba(201,168,76,0.6); }
+.bar-t3 { background:var(--gold); }
+.compare-vals { display:flex; gap:6px; }
+.compare-val { font-family:'Bebas Neue',sans-serif; font-size:15px; min-width:20px; text-align:center; }
+.v1 { color:rgba(201,168,76,0.4); }
+.v2 { color:rgba(201,168,76,0.7); }
+.v3 { color:var(--gold); }
+
+/* BUTTONS */
+.btn-gold { width:calc(100% - 32px); margin:0 16px 20px; padding:14px; background:var(--gold); color:#111; border:none; border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; cursor:pointer; transition:all 0.2s; }
+.btn-gold:hover { background:var(--gold-light); }
+.btn-gold:active { transform:scale(0.98); }
+
+/* TOAST */
+.toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--gold); color:#111; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; padding:10px 20px; border-radius:6px; transition:transform 0.3s; z-index:9999; white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+
+/* ─── ADMIN ─── */
+#screen-admin { display:none; }
+#screen-admin.active { display:block; }
+
+.admin-header { background:var(--text); padding:20px 16px; display:flex; align-items:center; justify-content:space-between; }
+.admin-header h1 { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--gold); }
+.admin-logout { background:transparent; border:1px solid rgba(255,255,255,0.2); border-radius:6px; padding:6px 14px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; color:#FFF; cursor:pointer; text-transform:uppercase; }
+.admin-logout:hover { border-color:var(--gold); color:var(--gold); }
+
+.admin-body { padding:16px; }
+
+.admin-section-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1.5px; color:var(--text); margin-bottom:12px; margin-top:20px; }
+.admin-section-title:first-child { margin-top:0; }
+
+/* CREATE FORM */
+.create-form { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:20px; display:grid; gap:12px; }
+
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+.form-field label { display:block; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+.form-field input, .form-field select {
+  width:100%; background:var(--input-bg); border:1px solid var(--border); border-radius:6px;
+  color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; padding:9px 12px;
+  outline:none; transition:border-color 0.2s; appearance:none;
+}
+.form-field input:focus, .form-field select:focus { border-color:var(--gold); }
+
+.btn-create { width:100%; padding:12px; background:var(--text); color:#FFF; border:none; border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; cursor:pointer; transition:all 0.2s; }
+.btn-create:hover { background:#333; }
+.btn-create:active { transform:scale(0.98); }
+
+/* PLAYERS LIST */
+.players-list { display:grid; gap:10px; }
+
+.player-card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+
+.player-poste-badge {
+  width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:1px; flex-shrink:0;
+  background:rgba(201,168,76,0.1); color:var(--gold); border:1px solid rgba(201,168,76,0.3);
+}
+
+.player-info { flex:1; min-width:0; }
+.player-name { font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; color:var(--text); }
+.player-meta { font-size:11px; color:var(--muted); margin-top:2px; }
+
+.player-code {
+  font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px;
+  color:var(--gold); background:rgba(201,168,76,0.08); padding:6px 12px; border-radius:6px;
+  border:1px solid rgba(201,168,76,0.2); flex-shrink:0;
+}
+
+.btn-delete { width:32px; height:32px; border-radius:6px; border:1px solid rgba(231,76,60,0.3); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; color:#E74C3C; flex-shrink:0; transition:all 0.15s; }
+.btn-delete:hover { background:rgba(231,76,60,0.1); }
+
+.empty-state { text-align:center; padding:30px 20px; color:var(--muted); font-size:13px; }
+
+/* STATS BAR */
+.stats-bar { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+.stat-card { background:var(--white); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; }
+.stat-val { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--gold); line-height:1; }
+.stat-label { font-size:10px; color:var(--muted); font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ ÉCRAN LOGIN ═══════════════ -->
+<div id="screen-login" class="screen">
+  <div class="login-logo">Y.E.S.I CONCEPT</div>
+  <h1 class="login-title">FICHES <em>DE POSTE</em></h1>
+  <div class="login-sub">Accès sécurisé — Entrez votre code</div>
+
+  <div class="login-card">
+    <label>Votre code d'accès</label>
+    <input type="text" class="code-input" id="codeInput" placeholder="XXXX" maxlength="12" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="login-error" id="loginError"></div>
+    <button class="btn-login" onclick="handleLogin()">ACCÉDER →</button>
+  </div>
+
+  <div class="login-admin-link" onclick="showAdminLogin()">Accès administrateur</div>
+</div>
+
+<!-- ═══════════════ ÉCRAN FICHE ═══════════════ -->
+<div id="screen-fiche" class="screen">
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showFichePage('poste',event)">📋 Fiche Poste</div>
+    <div class="nav-tab" onclick="showFichePage('eval',event)">⭐ Évaluation</div>
+    <div class="nav-tab" onclick="showFichePage('suivi',event)">📈 Suivi Trim.</div>
+  </div>
+
+  <!-- FICHE POSTE -->
+  <div id="fiche-poste" class="fiche-page active">
+    <div class="header" id="ficheHeader">
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <div class="poste-badge" id="posteBadge"><span id="posteEmoji">🛡️</span> POSTE</div>
+      <h1 id="ficheTitle">POSTE <em>—</em></h1>
+      <div class="header-sub" id="ficheSub">Référentiel des qualités requises</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="intro-qual" id="ficheIntro"></div>
+    <div class="ref-grid" id="ficheRefGrid"></div>
+    <div class="section-title" style="margin:0 16px 10px;">
+      <h2>AXES Y.E.S.I</h2>
+      <div class="line"></div>
+    </div>
+    <div style="margin:0 16px 24px;display:flex;flex-direction:column;gap:10px;" id="ficheYesi"></div>
+    <div class="pb-safe"></div>
+  </div>
+
+  <!-- ÉVALUATION -->
+  <div id="fiche-eval" class="fiche-page">
+    <div class="header">
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <div class="poste-badge"><span>⭐</span> ÉVALUATION</div>
+      <h1>FICHE <em>ÉVAL</em></h1>
+      <div class="header-sub" id="evalSub">Évaluation individuelle</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="score-global">
+      <div class="score-label" id="evalScoreLabel">Score Global</div>
+      <div><span class="score-number" id="scoreGlobal">0</span><span class="score-max">/10</span></div>
+      <div class="score-bar-wrap"><div class="score-bar-fill" id="scoreBar" style="width:0%"></div></div>
+      <div class="score-cats">
+        <div class="cat-score"><div class="cat-score-val" id="catTech" style="color:#5B9BD5;">—</div><div class="cat-score-label">Technique</div></div>
+        <div class="cat-score"><div class="cat-score-val" id="catPhy" style="color:#2ECC71;">—</div><div class="cat-score-label">Physique</div></div>
+        <div class="cat-score"><div class="cat-score-val" id="catTac" style="color:#E74C3C;">—</div><div class="cat-score-label">Tactique</div></div>
+        <div class="cat-score"><div class="cat-score-val" id="catMen" style="color:var(--gold);">—</div><div class="cat-score-label">Mental</div></div>
+      </div>
+    </div>
+    <div class="athlete-block">
+      <div class="field-group"><label>Prénom Nom</label><input type="text" id="evalNom" placeholder="Joueur"></div>
+      <div class="field-group"><label>Date d'éval.</label><input type="date" id="evalDate"></div>
+      <div class="field-group"><label>Évaluateur</label><input type="text" id="evalEval" placeholder="Coach"></div>
+      <div class="field-group"><label>Saison</label><input type="text" id="evalSaison" placeholder="2024–25"></div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#5B9BD5;"></div>Technique</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2ECC71;"></div>Physique</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E74C3C;"></div>Tactique</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>Mental</div>
+    </div>
+    <div class="section"><div class="section-title"><h2>TECHNIQUE</h2><div class="line"></div><div class="count" style="color:#5B9BD5;" id="techCount">0/6</div></div><div id="qualitesTech"></div></div>
+    <div class="section"><div class="section-title"><h2>PHYSIQUE</h2><div class="line"></div><div class="count" style="color:#2ECC71;" id="phyCount">0/6</div></div><div id="qualitesPhy"></div></div>
+    <div class="section"><div class="section-title"><h2>TACTIQUE</h2><div class="line"></div><div class="count" style="color:#E74C3C;" id="tacCount">0/6</div></div><div id="qualitesTac"></div></div>
+    <div class="section"><div class="section-title"><h2>MENTAL</h2><div class="line"></div><div class="count" style="color:var(--gold);" id="menCount">0/6</div></div><div id="qualitesMen"></div></div>
+    <div style="margin:0 16px 14px;"><div class="comment-block"><label>Observation générale</label><textarea id="evalObs" placeholder="Points forts, axes d'amélioration..."></textarea></div></div>
+    <button class="btn-gold" onclick="showToast('Évaluation enregistrée ✓')">💾 ENREGISTRER</button>
+    <div class="pb-safe"></div>
+  </div>
+
+  <!-- SUIVI -->
+  <div id="fiche-suivi" class="fiche-page">
+    <div class="header">
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+      <div class="poste-badge"><span>📈</span> PROGRESSION</div>
+      <h1>SUIVI <em>TRIM.</em></h1>
+      <div class="header-sub" id="suiviSub">Auto-évaluation trimestrielle</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="compare-block" id="compareBlock" style="display:none;">
+      <div class="compare-title">Progression par critère</div>
+      <div id="compareRows"></div>
+      <div style="display:flex;gap:14px;margin-top:10px;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);"><div style="width:20px;height:6px;background:rgba(201,168,76,0.3);border-radius:3px;"></div>T1</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);"><div style="width:20px;height:6px;background:rgba(201,168,76,0.6);border-radius:3px;"></div>T2</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);"><div style="width:20px;height:6px;background:var(--gold);border-radius:3px;"></div>T3</div>
+      </div>
+    </div>
+    <div class="trimestre-block"><div class="trimestre-header" onclick="toggleTrim(1)"><div class="trimestre-title">🗓 TRIMESTRE 1</div><div class="trimestre-badge" id="trim1Badge">—</div></div><div class="trimestre-body" id="trim1Body"><div class="auto-eval-grid" id="trim1Grid"></div><div class="comment-block" style="margin-top:14px;"><label>Ressenti & engagement</label><textarea id="trim1Comment" placeholder="Comment je me suis senti ?"></textarea></div><button class="btn-gold" style="margin:14px 0 0;width:100%;" onclick="saveTrim(1)">✅ VALIDER T1</button></div></div>
+    <div class="trimestre-block"><div class="trimestre-header" onclick="toggleTrim(2)"><div class="trimestre-title">🗓 TRIMESTRE 2</div><div class="trimestre-badge" id="trim2Badge">—</div></div><div class="trimestre-body" id="trim2Body" style="display:none;"><div class="auto-eval-grid" id="trim2Grid"></div><div class="comment-block" style="margin-top:14px;"><label>Ressenti & engagement</label><textarea id="trim2Comment" placeholder="Comment je me suis senti ?"></textarea></div><button class="btn-gold" style="margin:14px 0 0;width:100%;" onclick="saveTrim(2)">✅ VALIDER T2</button></div></div>
+    <div class="trimestre-block"><div class="trimestre-header" onclick="toggleTrim(3)"><div class="trimestre-title">🗓 TRIMESTRE 3</div><div class="trimestre-badge" id="trim3Badge">—</div></div><div class="trimestre-body" id="trim3Body" style="display:none;"><div class="auto-eval-grid" id="trim3Grid"></div><div class="comment-block" style="margin-top:14px;"><label>Ressenti & engagement</label><textarea id="trim3Comment" placeholder="Comment je me suis senti ?"></textarea></div><button class="btn-gold" style="margin:14px 0 0;width:100%;" onclick="saveTrim(3)">✅ VALIDER T3</button></div></div>
+    <div class="pb-safe"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ ÉCRAN ADMIN ═══════════════ -->
+<div id="screen-admin" class="screen">
+  <div class="admin-header">
+    <h1>⚙️ ADMIN — Y.E.S.I</h1>
+    <button class="admin-logout" onclick="logout()">Déconnexion</button>
+  </div>
+  <div class="admin-body">
+
+    <div class="stats-bar">
+      <div class="stat-card"><div class="stat-val" id="statTotal">0</div><div class="stat-label">Joueurs</div></div>
+      <div class="stat-card"><div class="stat-val" id="statPostes">0</div><div class="stat-label">Postes</div></div>
+      <div class="stat-card"><div class="stat-val" id="statActifs">0</div><div class="stat-label">Codes actifs</div></div>
+    </div>
+
+    <div class="admin-section-title">Créer un accès joueur</div>
+    <div class="create-form">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Prénom Nom du joueur</label>
+          <input type="text" id="newPlayerName" placeholder="Kais Lfareh">
+        </div>
+        <div class="form-field">
+          <label>Code d'accès</label>
+          <input type="text" id="newPlayerCode" placeholder="EX: KAIS25" maxlength="12" style="text-transform:uppercase;">
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Poste</label>
+        <select id="newPlayerPoste">
+          <option value="">— Choisir un poste —</option>
+          <option value="DC">Défenseur Central</option>
+          <option value="LAT">Latéral</option>
+          <option value="MDef">Milieu Défensif</option>
+          <option value="MRel">Milieu Relayeur</option>
+          <option value="MC">Milieu Créatif (N°10)</option>
+          <option value="Ailier">Ailier</option>
+          <option value="AP">Attaquant de Pointe (N°9)</option>
+        </select>
+      </div>
+      <button class="btn-create" onclick="createPlayer()">+ CRÉER L'ACCÈS</button>
+    </div>
+
+    <div class="admin-section-title">Joueurs enregistrés</div>
+    <div class="players-list" id="playersList"></div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONSTANTES ──────────────────────────────────────────────────────────
+const ADMIN_CODE = 'YESI-ADMIN';
+
+const POSTES_META = {
+  DC:     { label:'Défenseur Central', abbr:'DC',  emoji:'🛡️', badge:'DÉFENSE',   color:'var(--gold)' },
+  LAT:    { label:'Le Latéral',        abbr:'LAT', emoji:'⚡', badge:'DÉFENSE',   color:'var(--gold)' },
+  MDef:   { label:'Milieu Défensif',   abbr:'MD',  emoji:'🛡️', badge:'MILIEU',    color:'var(--gold)' },
+  MRel:   { label:'Milieu Relayeur',   abbr:'MR',  emoji:'⚙️', badge:'MILIEU',    color:'var(--gold)' },
+  MC:     { label:'Milieu Créatif',    abbr:'N°10',emoji:'🎨', badge:'MILIEU',    color:'var(--gold)' },
+  Ailier: { label:'Ailier',            abbr:'EXT', emoji:'⚡', badge:'ATTAQUE',   color:'var(--gold)' },
+  AP:     { label:'Attaquant de Pointe',abbr:'N°9',emoji:'🎯', badge:'ATTAQUE',   color:'var(--gold)' },
+};
+
+const QUALITES_DATA = {
+  DC: {
+    intro: 'Le Défenseur Central est le pilier de la ligne défensive. Il doit combiner dureté physique, lecture du jeu, leadership et qualité technique pour protéger le but et initier la relance.',
+    qualites: {
+      tech: [
+        {id:'dc_t1',name:'Passe courte précise',desc:'Qualité et direction de la passe dans les pieds d\'un partenaire'},
+        {id:'dc_t2',name:'Relance longue',desc:'Capacité à changer le jeu pied directeur et non-directeur'},
+        {id:'dc_t3',name:'Contrôle sous pression',desc:'Premier contrôle orienté, gestuelle propre quand l\'adversaire presse'},
+        {id:'dc_t4',name:'Jeu de tête',desc:'Puissance et précision dans les duels aériens offensifs/défensifs'},
+        {id:'dc_t5',name:'Tacle / Dégagement',desc:'Timing, impact, sécurisation de la zone suite au dégagement'},
+        {id:'dc_t6',name:'Sortie balle au pied',desc:'Capacité à remonter la balle proprement et à progresser'}
+      ],
+      phy: [
+        {id:'dc_p1',name:'Puissance dans les duels',desc:'Rapport de force et placement du corps pour prendre le dessus'},
+        {id:'dc_p2',name:'Explosivité (démarrage)',desc:'Qualité du premier pas pour couvrir rapidement un espace'},
+        {id:'dc_p3',name:'Endurance (90 min)',desc:'Maintien du niveau d\'intensité sur l\'ensemble du match'},
+        {id:'dc_p4',name:'Gabarit / Présence physique',desc:'Impact physique naturel dans les duels et l\'aérien'},
+        {id:'dc_p5',name:'Vitesse de replacement',desc:'Rapidité à revenir dans l\'axe et à réorganiser la ligne'},
+        {id:'dc_p6',name:'Souplesse / Appuis',desc:'Mobilité articulaire et qualité des changements de direction'}
+      ],
+      tac: [
+        {id:'dc_c1',name:'Lecture du jeu',desc:'Anticipation des intentions adverses avant que l\'action se développe'},
+        {id:'dc_c2',name:'Positionnement défensif',desc:'Placement correct entre la balle et le but en fonction du contexte'},
+        {id:'dc_c3',name:'Couverture des espaces',desc:'Gestion des zones derrière la ligne défensive'},
+        {id:'dc_c4',name:'Compréhension des lignes',desc:'Maîtrise du hors-jeu, montée de ligne, ligne haute'},
+        {id:'dc_c5',name:'Organisation défensive',desc:'Capacité à replacer ses coéquipiers et à tenir la ligne'},
+        {id:'dc_c6',name:'Anticipation des passes',desc:'Interceptions proactives grâce à la lecture des trajectoires'}
+      ],
+      men: [
+        {id:'dc_m1',name:'Leadership vocal',desc:'Guider, alerter et motiver la défense en permanence'},
+        {id:'dc_m2',name:'Concentration 90 min',desc:'Maintien de l\'attention totale sur chaque phase de jeu'},
+        {id:'dc_m3',name:'Gestion de la pression',desc:'Qualité d\'action maintenue dans les moments décisifs'},
+        {id:'dc_m4',name:'Tempérament compétitif',desc:'Envie de gagner chaque duel, chaque phase'},
+        {id:'dc_m5',name:'Résilience / Rebond',desc:'Capacité à rebondir après une erreur sans s\'effondrer mentalement'},
+        {id:'dc_m6',name:'Communication défense',desc:'Lien constant avec le gardien et les latéraux'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Posture mentale du DC',texte:'Le DC n\'a pas le droit de douter en plein match. La <strong style="color:#111;">Yes Attitude</strong>, c\'est aborder chaque duel avec la certitude de le gagner — même après une erreur. C\'est se relever, replacer, parler. Le défenseur central qui doute contamine toute sa ligne.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Se connaître pour mieux défendre',texte:'Le DC doit avoir une image claire et réaliste de ses forces. Connaître son côté fort, sa vitesse réelle, ses limites dans l\'aérien — c\'est prendre de meilleures décisions. L\'<strong style="color:#111;">Estime de Soi</strong> ce n\'est pas l\'arrogance : c\'est accepter ses lacunes sans les fuir.'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Objectifs ciblés & mesurables',texte:'Le DC en développement fixe des cibles précises : <strong style="color:#111;">0 faute dans les 20 dernières minutes, améliorer la relance longue pied non-directeur, gagner 80% des duels aériens sur corner.</strong> Les <strong style="color:#111;">Smart Goals</strong> permettent de mesurer la progression match après match.'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'L\'effort qui fait la différence',texte:'Le poste de DC est ingrat : une erreur annule dix actions réussies. L\'<strong style="color:#111;">Investissement</strong>, c\'est choisir de travailler les détails que personne ne voit — le replacement hors-balle, la communication au pressing, la vidéo-analyse de ses propres erreurs.'}
+    ]
+  },
+  LAT: {
+    intro: 'Le Latéral est un joueur de couloir à double mission : défendre sur son flanc et participer activement à la construction offensive. Sa maîtrise du couloir, sa lecture du jeu et sa disponibilité permanente sont les marqueurs d\'un latéral complet.',
+    qualites: {
+      tech: [
+        {id:'lat_t1',name:'Centre depuis le couloir',desc:'Qualité et variété des centres (tendu, lobé, rasant) depuis son flanc'},
+        {id:'lat_t2',name:'Relance courte & longue',desc:'Sortie propre balle au pied, passe dans les pieds ou en profondeur'},
+        {id:'lat_t3',name:'Contrôle orienté',desc:'Premier contrôle vers l\'intérieur ou en profondeur sous pression adverse'},
+        {id:'lat_t4',name:'Duel 1v1 (offensif & défensif)',desc:'Éliminer un adversaire en montée, mais aussi tenir son couloir en défense face à un ailier'},
+        {id:'lat_t5',name:'Tacle / Intervention défensive',desc:'Timing et propreté du tacle pour couper une course ou récupérer le ballon'},
+        {id:'lat_t6',name:'Passe en retrait / combinaison',desc:'Jeu en triangle avec le milieu et l\'ailier pour progresser proprement'}
+      ],
+      phy: [
+        {id:'lat_p1',name:'Vitesse de pointe',desc:'Couvrir son couloir en sprint défensif et déborder en montée offensive'},
+        {id:'lat_p2',name:'Endurance (couloir 90 min)',desc:'Maintien du niveau d\'intensité sur les montées et retours répétés'},
+        {id:'lat_p3',name:'Explosivité (démarrage)',desc:'Qualité du premier pas pour fermer un espace ou déclencher une montée'},
+        {id:'lat_p4',name:'Puissance dans les duels',desc:'Résistance physique dans les contacts défensifs et offensifs de couloir'},
+        {id:'lat_p5',name:'Souplesse / Appuis latéraux',desc:'Mobilité articulaire pour les changements de direction rapides'},
+        {id:'lat_p6',name:'Capacité de récupération',desc:'Retour rapide en position défensive après chaque montée'}
+      ],
+      tac: [
+        {id:'lat_c1',name:'Lecture défensive du couloir',desc:'Anticipation des courses adverses sur son flanc'},
+        {id:'lat_c2',name:'Timing des montées offensives',desc:'Choisir le bon moment pour monter sans désorganiser la défense'},
+        {id:'lat_c3',name:'Couverture & chevauchement',desc:'Coordination avec l\'ailier pour les combinaisons de couloir'},
+        {id:'lat_c4',name:'Positionnement défensif',desc:'Placement correct face à l\'attaquant direct et aux rentrées intérieures'},
+        {id:'lat_c5',name:'Compréhension de la ligne',desc:'Maîtrise du hors-jeu et synchronisation avec les DC'},
+        {id:'lat_c6',name:'Transition défense / attaque',desc:'Rapidité à passer du bloc défensif à l\'engagement offensif'}
+      ],
+      men: [
+        {id:'lat_m1',name:'Courage défensif',desc:'S\'engager dans les duels 1v1 même face à un ailier plus rapide'},
+        {id:'lat_m2',name:'Concentration 90 min',desc:'Ne jamais relâcher sur son couloir, même en période creuse'},
+        {id:'lat_m3',name:'Résilience / Rebond',desc:'Rebondir après un dribble subi ou une erreur de placement'},
+        {id:'lat_m4',name:'Communication avec les DC',desc:'Signaler les courses, les doublements, et organiser son couloir'},
+        {id:'lat_m5',name:'Gestion du risque offensif',desc:'Doser ses prises de risque pour ne pas se faire prendre dos au but'},
+        {id:'lat_m6',name:'Mentalité de travailleur',desc:'Accepter les phases ingrates (retours défensifs répétés) sans se plaindre'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Posture offensive & défensive',texte:'Le latéral est constamment sollicité dans les deux sens. La <strong style="color:#111;">Yes Attitude</strong>, c\'est monter sur son couloir même quand les jambes brûlent, et revenir en courant même après un centre raté. C\'est refuser de se planquer après un dribble subi.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Connaître ses forces de couloir',texte:'Connaît-il sa vitesse maximale, ses limites dans les duels aériens, son vrai niveau de centre ? L\'<strong style="color:#111;">Estime de Soi</strong> du latéral, c\'est savoir quand centrer en retrait plutôt que de forcer le 1v1 perdu d\'avance.'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Objectifs mesurables par match',texte:'Le latéral se fixe des objectifs précis : <strong style="color:#111;">3 centres réussis par match, 0 dribble subi dans son couloir en 2ème mi-temps, 80% de montées offensives suivies d\'un retour défensif complet.</strong>'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'Le couloir ne s\'entretient pas seul',texte:'Le latéral court plus que la plupart des joueurs sur le terrain. L\'<strong style="color:#111;">Investissement</strong>, c\'est travailler sa foulée de récupération après les montées, répéter les centres en entraînement des deux pieds.'}
+    ]
+  },
+  MDef: {
+    intro: 'Le Milieu Défensif est le filtre entre la défense et le reste de l\'équipe. Il casse les lignes adverses, protège la charnière, récupère les ballons et relance proprement. C\'est le joueur le plus intelligent tactiquement sur le terrain.',
+    qualites: {
+      tech: [
+        {id:'md_t1',name:'Passe courte & longue',desc:'Qualité et précision de la relance après récupération, dans les deux pieds'},
+        {id:'md_t2',name:'Contrôle sous pression',desc:'Premier contrôle propre et orienté quand l\'adversaire presse haut'},
+        {id:'md_t3',name:'Interception / Tacle',desc:'Lecture des trajectoires pour couper les passes, timing du tacle en duel'},
+        {id:'md_t4',name:'Duel aérien (axe)',desc:'Remporter les duels aériens dans l\'entrejeu pour sécuriser les secondes balles'},
+        {id:'md_t5',name:'Relance après récupération',desc:'Capacité à utiliser proprement le ballon dans les 3 secondes suivant la récupération'},
+        {id:'md_t6',name:'Jeu dos au but',desc:'Protéger le ballon, pivoter, distribuer quand on reçoit face à son but'}
+      ],
+      phy: [
+        {id:'md_p1',name:'Endurance (pressing 90 min)',desc:'Maintenir l\'intensité du pressing et des courses de couverture sur tout le match'},
+        {id:'md_p2',name:'Puissance dans les duels',desc:'Résistance au contact dans les duels au sol et les 50/50 de l\'entrejeu'},
+        {id:'md_p3',name:'Explosivité (couverture)',desc:'Réaction rapide pour couvrir un DC pris de vitesse ou fermer un couloir'},
+        {id:'md_p4',name:'Résistance au contact',desc:'Tenir son placement sous pression physique, ne pas se faire bousculer dans l\'axe'},
+        {id:'md_p5',name:'Vitesse de replacement',desc:'Retour rapide dans l\'axe après une montée ou un pressing raté'},
+        {id:'md_p6',name:'Solidité physique générale',desc:'Gabarit et capacité à tenir le choc sur des phases répétées de duel'}
+      ],
+      tac: [
+        {id:'md_c1',name:'Lecture du jeu adverse',desc:'Anticiper les combinaisons entre les lignes et les décrochages des attaquants'},
+        {id:'md_c2',name:'Positionnement entre les lignes',desc:'Occuper le bon espace pour être à la fois disponible à la relance et protecteur'},
+        {id:'md_c3',name:'Couverture des DC',desc:'Se placer pour compenser un DC sorti de sa zone ou pris en défaut'},
+        {id:'md_c4',name:'Pressing organisé',desc:'Déclencher le pressing au bon moment, orienter l\'adversaire vers les zones souhaitées'},
+        {id:'md_c5',name:'Gestion des transitions',desc:'Réagir immédiatement à la perte du ballon pour casser la contre-attaque adverse'},
+        {id:'md_c6',name:'Organisation du bloc équipe',desc:'Diriger le repli défensif, remettre l\'équipe en place vocalement et par son positionnement'}
+      ],
+      men: [
+        {id:'md_m1',name:'Leadership défensif',desc:'Prendre en charge l\'organisation défensive, diriger sans hésitation'},
+        {id:'md_m2',name:'Concentration 90 min',desc:'Rester vigilant sur chaque transition, ne jamais déconnecter d\'une phase de jeu'},
+        {id:'md_m3',name:'Agressivité contrôlée',desc:'Être combatif dans les duels sans tomber dans la faute inutile ou l\'excès'},
+        {id:'md_m4',name:'Gestion de la frustration',desc:'Accepter les ballons perdus, les passes ratées, sans dégrader sa concentration'},
+        {id:'md_m5',name:'Discipline tactique',desc:'Respecter le positionnement défini même quand la tentation de monter se présente'},
+        {id:'md_m6',name:'Sang-froid sous pression',desc:'Relancer proprement quand l\'équipe est sous le pressing adverse, ne pas paniquer'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Le travail invisible au service du collectif',texte:'Le milieu défensif ne marque pas, ne dribble pas dix joueurs, ne fait pas les une. Sa <strong style="color:#111;">Yes Attitude</strong>, c\'est accepter ce rôle ingrat avec fierté — casser le jeu adverse, couvrir, répéter les efforts sans chercher la gloire.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Assumer son rôle de sentinelle',texte:'Le MD qui se sous-estime sort de sa zone, monte trop haut, essaie de briller là où ce n\'est pas son rôle. L\'<strong style="color:#111;">Estime de Soi</strong> ici, c\'est comprendre que tenir sa position avec discipline est une vraie force — pas une limitation.'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Objectifs défensifs précis',texte:'Le MD se fixe des cibles mesurables : <strong style="color:#111;">nombre de ballons récupérés par match, taux de réussite des passes après récupération, duels au sol gagnés.</strong> Les <strong style="color:#111;">Smart Goals</strong> lui permettent de quantifier un travail souvent invisible.'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'La préparation qui fait le vrai filtre',texte:'Le meilleur MD n\'est pas le plus fort — c\'est le plus préparé. L\'<strong style="color:#111;">Investissement</strong>, c\'est analyser les habitudes de l\'adversaire avant le match, étudier les zones de décrochage, anticiper les passes entre les lignes.'}
+    ]
+  },
+  MRel: {
+    intro: 'Le Milieu Relayeur est le joueur le plus complet du terrain. Box-to-box par nature, il doit être capable de casser un pressing, de récupérer un ballon, de déclencher une transition et de se projeter dans la surface. C\'est le moteur de l\'équipe.',
+    qualites: {
+      tech: [
+        {id:'mr_t1',name:'Passe courte & longue',desc:'Précision et variété de la passe pour relier les lignes et changer le jeu'},
+        {id:'mr_t2',name:'Contrôle orienté sous pression',desc:'Premier contrôle propre dans l\'entrejeu où l\'espace est minimal'},
+        {id:'mr_t3',name:'Frappe (loin & en mouvement)',desc:'Capacité à tirer de loin ou à conclure après une insertion dans la surface'},
+        {id:'mr_t4',name:'Dribble en espace réduit',desc:'Se sortir du pressing adverse par un geste technique dans un couloir serré'},
+        {id:'mr_t5',name:'Tacle / Récupération balle',desc:'Intervenir proprement dans les duels au sol défensifs sans commettre de faute'},
+        {id:'mr_t6',name:'Jeu à une touche',desc:'Jouer vite dans les zones congestionnées pour accélérer le jeu de l\'équipe'}
+      ],
+      phy: [
+        {id:'mr_p1',name:'Endurance (box-to-box 90 min)',desc:'Couvrir les deux surfaces de réparation sur l\'ensemble du match'},
+        {id:'mr_p2',name:'Vitesse de déplacement',desc:'Capacité à effectuer des courses longues en transition défensive et offensive'},
+        {id:'mr_p3',name:'Explosivité (accélérations)',desc:'Démarrer vite pour décrocher, se projeter ou contre-presser après une perte'},
+        {id:'mr_p4',name:'Puissance dans les duels',desc:'Résistance au contact dans les 50/50 de l\'entrejeu'},
+        {id:'mr_p5',name:'Répétition d\'efforts',desc:'Enchaîner les sprints défensifs et offensifs sans perte de qualité sur 90 min'},
+        {id:'mr_p6',name:'Résistance au contact',desc:'Tenir le ballon et garder son équilibre sous les charges adverses en zone dense'}
+      ],
+      tac: [
+        {id:'mr_c1',name:'Lecture des transitions',desc:'Identifier instantanément si l\'équipe doit attaquer ou défendre après une perte'},
+        {id:'mr_c2',name:'Timing des appels & insertions',desc:'Se projeter dans la surface au bon moment sans être hors-jeu'},
+        {id:'mr_c3',name:'Soutien défensif & offensif',desc:'Être disponible pour le porteur dans les deux phases — jamais isolé'},
+        {id:'mr_c4',name:'Pressing & récupération haute',desc:'Déclencher le pressing au bon moment pour forcer l\'erreur adverse'},
+        {id:'mr_c5',name:'Gestion des espaces entre lignes',desc:'Occuper les zones entre la défense et le milieu adverse'},
+        {id:'mr_c6',name:'Permutations avec coéquipiers',desc:'S\'échanger les zones avec l\'ailier ou le latéral pour désorganiser l\'adversaire'}
+      ],
+      men: [
+        {id:'mr_m1',name:'Moteur & énergie collective',desc:'Donner le rythme par ses courses, ses appels et son intensité'},
+        {id:'mr_m2',name:'Concentration bi-phase',desc:'Basculer mentalement entre phase défensive et offensive sans temps de latence'},
+        {id:'mr_m3',name:'Prise de décision rapide',desc:'Choisir vite la bonne option dans un espace réduit, sans hésitation'},
+        {id:'mr_m4',name:'Résilience sur l\'effort répété',desc:'Maintenir sa qualité d\'action au 80ème min comme au 10ème'},
+        {id:'mr_m5',name:'Influence sur le tempo',desc:'Savoir accélérer ou ralentir le jeu selon le contexte'},
+        {id:'mr_m6',name:'Gestion de l\'intensité',desc:'Doser ses efforts pour ne pas s\'épuiser trop tôt et rester décisif dans les moments clés'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Le moteur qui ne s\'éteint pas',texte:'Le relayeur est partout — et c\'est exactement ce qu\'on lui demande. La <strong style="color:#111;">Yes Attitude</strong>, c\'est accepter de courir pour les autres, de défendre après avoir attaqué, d\'attaquer après avoir défendu — sans jamais baisser le bras.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Connaître ses deux visages',texte:'Le relayeur joue à la fois défenseur et attaquant. L\'<strong style="color:#111;">Estime de Soi</strong>, c\'est connaître précisément où il est le plus efficace — est-il meilleur en phase de récupération ou en phase de projection ?'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Des objectifs dans les deux phases',texte:'Les <strong style="color:#111;">Smart Goals</strong> du relayeur couvrent les deux phases : <strong style="color:#111;">nombre de ballons récupérés, passes décisives, km parcourus, insertions dans la surface, tirs cadrés.</strong>'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'La double exigence physique & mentale',texte:'L\'<strong style="color:#111;">Investissement</strong>, c\'est travailler sa frappe en dehors des séances collectives, entretenir son endurance spécifique, et analyser ses transitions pour savoir exactement quand monter et quand rester.'}
+    ]
+  },
+  MC: {
+    intro: 'Le Milieu Créatif est le cerveau de l\'équipe. Entre les lignes, dos au but ou face à la défense, c\'est lui qui voit ce que les autres ne voient pas encore. Sa mission : casser les lignes adverses par la passe, le dribble ou le déplacement.',
+    qualites: {
+      tech: [
+        {id:'mc_t1',name:'Passe décisive (dernière passe)',desc:'Trouver le bon partenaire dans les 30 derniers mètres pour créer une occasion franche'},
+        {id:'mc_t2',name:'Dribble & élimination en 1v1',desc:'Éliminer le défenseur par le geste technique, le changement de rythme ou la feinte'},
+        {id:'mc_t3',name:'Frappe & coup franc',desc:'Qualité de tir des deux pieds, sur coup franc direct ou après une combinaison'},
+        {id:'mc_t4',name:'Contrôle orienté (dos au but)',desc:'Recevoir dos au but et pivoter proprement pour se retourner face à la défense'},
+        {id:'mc_t5',name:'Passe en profondeur / lobée',desc:'Casser la ligne défensive par une passe précise dans l\'espace derrière la défense'},
+        {id:'mc_t6',name:'Jeu à une touche sous pression',desc:'Jouer vite dans les espaces réduits pour éviter le pressing et accélérer le jeu'}
+      ],
+      phy: [
+        {id:'mc_p1',name:'Agilité & changements de rythme',desc:'Varier l\'allure pour désorienter les défenseurs — accélérer, freiner, repartir'},
+        {id:'mc_p2',name:'Résistance aux duels physiques',desc:'Tenir le ballon sous les charges et rester debout quand les défenseurs pressent fort'},
+        {id:'mc_p3',name:'Endurance (déplacements constants)',desc:'Se déplacer en permanence pour créer des décalages, même sans ballon'},
+        {id:'mc_p4',name:'Équilibre & centre de gravité bas',desc:'Stabilité dans les dribbles et les contacts — difficile à déséquilibrer en mouvement'},
+        {id:'mc_p5',name:'Explosivité sur courte distance',desc:'Partir vite sur 5 à 10 mètres pour se libérer d\'un marquage'},
+        {id:'mc_p6',name:'Protection de balle',desc:'Interposer le corps entre le ballon et l\'adversaire pour conserver la possession'}
+      ],
+      tac: [
+        {id:'mc_c1',name:'Décrochage & appel entre les lignes',desc:'Se placer dans le dos du milieu adverse pour recevoir entre défense et milieu'},
+        {id:'mc_c2',name:'Vision du jeu (360°)',desc:'Percevoir les positions des partenaires et adversaires avant de recevoir le ballon'},
+        {id:'mc_c3',name:'Création d\'espaces pour les autres',desc:'Par ses déplacements, libérer des zones pour les attaquants et ailiers à exploiter'},
+        {id:'mc_c4',name:'Lecture des mouvements offensifs',desc:'Anticiper les courses des attaquants pour servir la passe au bon moment'},
+        {id:'mc_c5',name:'Pressing & récupération haute',desc:'Participer au pressing offensif pour récupérer le ballon dans les zones dangereuses'},
+        {id:'mc_c6',name:'Gestion du tempo offensif',desc:'Savoir quand accélérer le jeu et quand le ralentir pour déséquilibrer le bloc adverse'}
+      ],
+      men: [
+        {id:'mc_m1',name:'Prise de risque assumée',desc:'Tenter la passe audacieuse ou le dribble ambitieux même avec la conscience que ça peut rater'},
+        {id:'mc_m2',name:'Créativité & spontanéité',desc:'Jouer sur l\'instinct, sortir du cadre prévisible, surprendre par des solutions inattendues'},
+        {id:'mc_m3',name:'Résistance à la pression du rôle',desc:'Porter le statut de "joueur qui doit faire la différence" sans se bloquer mentalement'},
+        {id:'mc_m4',name:'Concentration dans les zones clés',desc:'Rester mentalement présent dans les 30 derniers mètres où chaque décision compte double'},
+        {id:'mc_m5',name:'Leadership offensif',desc:'Guider les autres offensivement — demander le ballon, proposer des solutions'},
+        {id:'mc_m6',name:'Sang-froid dans les moments décisifs',desc:'Garder la qualité technique et la lucidité dans les moments à haute pression'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Oser quand les autres hésitent',texte:'Le numéro 10 vit sous la pression d\'être le joueur différent. La <strong style="color:#111;">Yes Attitude</strong>, c\'est tenter la passe que personne d\'autre n\'a vue — même si elle peut rater. Le créatif qui doute de lui-même devient prévisible.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Assumer son talent sans le fuir',texte:'Le joueur créatif est souvent le plus exposé aux critiques. L\'<strong style="color:#111;">Estime de Soi</strong>, c\'est connaître la valeur de sa vision du jeu, ne pas brider son instinct sous la peur du jugement.'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Quantifier la créativité',texte:'Les <strong style="color:#111;">Smart Goals</strong> du numéro 10 : <strong style="color:#111;">passes clés par match, dribbles réussis, tirs cadrés, ballons joués dos au but.</strong> Se fixer des objectifs précis lui permet de construire une régularité mesurable.'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'Le talent ne suffit pas',texte:'Les plus grands numéros 10 de l\'histoire n\'étaient pas que talentueux — ils étaient obsédés par leur jeu. L\'<strong style="color:#111;">Investissement</strong>, c\'est regarder des matchs pour comprendre les mouvements, travailler sa passe décisive en dehors des séances.'}
+    ]
+  },
+  Ailier: {
+    intro: 'L\'Ailier est le joueur le plus imprévisible du terrain. Sur son couloir, il met le feu — par la vitesse, le dribble, le centre ou la frappe intérieure. L\'ailier moderne doit aussi défendre et presser — il n\'a plus le luxe de ne jouer que dans un sens.',
+    qualites: {
+      tech: [
+        {id:'ai_t1',name:'Dribble & élimination en 1v1',desc:'Éliminer le latéral adverse par la technique, la feinte ou le changement de rythme'},
+        {id:'ai_t2',name:'Centre (tendu, lobé, rasant)',desc:'Varier les types de centres selon le positionnement des attaquants dans la surface'},
+        {id:'ai_t3',name:'Frappe pied intérieur / extérieur',desc:'Conclure en rentrant dans l\'axe ou frapper depuis le couloir avec précision'},
+        {id:'ai_t4',name:'Contrôle en mouvement',desc:'Prendre le ballon dans la course sans perdre de vitesse ni d\'orientation'},
+        {id:'ai_t5',name:'Feintes & changements de direction',desc:'Déstabiliser le défenseur par des feintes de corps, de passe ou de tir'},
+        {id:'ai_t6',name:'Passe en retrait / combinaison',desc:'Jouer court avec le latéral ou le milieu pour relancer et créer un nouveau déséquilibre'}
+      ],
+      phy: [
+        {id:'ai_p1',name:'Vitesse de pointe',desc:'Partir en profondeur sur le dernier défenseur et le distancer dans l\'espace'},
+        {id:'ai_p2',name:'Explosivité (démarrage 0-10m)',desc:'Premier pas fulgurant pour prendre le dessus dans le duel de couloir'},
+        {id:'ai_p3',name:'Agilité & appuis rapides',desc:'Enchaîner les changements de direction à haute vitesse sans perdre le ballon'},
+        {id:'ai_p4',name:'Endurance (répétition de sprints)',desc:'Maintenir la capacité à déborder en fin de match comme en début'},
+        {id:'ai_p5',name:'Résistance aux duels physiques',desc:'Ne pas se laisser intimider ou bousculer par un latéral plus fort physiquement'},
+        {id:'ai_p6',name:'Équilibre sous le contact',desc:'Garder le ballon et conserver son centre de gravité bas malgré les charges adverses'}
+      ],
+      tac: [
+        {id:'ai_c1',name:'Timing du départ en profondeur',desc:'Partir au bon moment pour ne pas être hors-jeu et pour prendre le défenseur de vitesse'},
+        {id:'ai_c2',name:'Rentrée intérieure (pied inversé)',desc:'Couper vers l\'axe pour frapper du pied fort plutôt que centrer systématiquement'},
+        {id:'ai_c3',name:'Pressing défensif haut',desc:'Chasser le latéral adverse en possession pour déclencher la récupération haute'},
+        {id:'ai_c4',name:'Jeu en couloir (combinaison LAT)',desc:'Créer le surnombre avec le latéral par des appels et des une-deux dans le couloir'},
+        {id:'ai_c5',name:'Appel dans le dos de la défense',desc:'Se placer derrière la ligne défensive pour exploiter les passes en profondeur'},
+        {id:'ai_c6',name:'Replacements défensifs',desc:'Revenir dans le bloc et couvrir le latéral adverse quand l\'équipe défend'}
+      ],
+      men: [
+        {id:'ai_m1',name:'Audace & prise de risque',desc:'Tenter le dribble même dans les zones à risque — l\'ailier doit oser pour exister'},
+        {id:'ai_m2',name:'Résilience après dribble raté',desc:'Reprendre le duel immédiatement après l\'avoir perdu sans perdre confiance'},
+        {id:'ai_m3',name:'Concentration devant le but',desc:'Garder son calme dans les situations de finition après avoir éliminé son adversaire'},
+        {id:'ai_m4',name:'Envie de provoquer en permanence',desc:'Chercher en permanence la situation de 1v1 — ne jamais se satisfaire d\'une passe sûre'},
+        {id:'ai_m5',name:'Sang-froid dans le dernier geste',desc:'Centrer, tirer ou passer avec précision malgré la pression et la fatigue'},
+        {id:'ai_m6',name:'Discipline défensive',desc:'Accepter les phases défensives et s\'y investir sans décrocher mentalement du match'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Provoquer encore, toujours',texte:'L\'ailier qui se souvient de son dernier dribble raté ne fera plus rien. La <strong style="color:#111;">Yes Attitude</strong>, c\'est reprendre le dribble juste après l\'avoir perdu — parce que c\'est en provoquant qu\'il crée le danger.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Connaître son arme principale',texte:'Est-il un ailier de vitesse pure, un technicien du dribble, ou un finisseur qui rentre dans l\'axe ? L\'<strong style="color:#111;">Estime de Soi</strong>, c\'est identifier son arme principale et l\'assumer sans essayer d\'imiter un autre profil.'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Mesurer l\'impact dans le dernier tiers',texte:'L\'ailier se fixe des objectifs concrets : <strong style="color:#111;">dribbles réussis par match, centres exploités, tirs cadrés, passes clés, duels offensifs gagnés.</strong>'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'Travailler les deux sens du couloir',texte:'L\'<strong style="color:#111;">Investissement</strong>, c\'est répéter les centres sous pression, travailler la frappe du pied non-dominant pour ne pas être prévisible, et accepter les séquences défensives sans décrocher mentalement.'}
+    ]
+  },
+  AP: {
+    intro: 'L\'Attaquant de Pointe est le joueur le plus attendu sur le terrain. Chaque occasion est un verdict. Sa mission : être dans les bons espaces, au bon moment, et conclure. Le but est son métier — la pression est son carburant.',
+    qualites: {
+      tech: [
+        {id:'ap_t1',name:'Finition (deux pieds)',desc:'Conclure proprement du pied droit comme du gauche, en puissance ou en placement'},
+        {id:'ap_t2',name:'Jeu de tête offensif',desc:'Dévier, placer ou pousser au fond des filets sur les centres et corners'},
+        {id:'ap_t3',name:'Contrôle & pivot en surface',desc:'Recevoir dos au but, contrôler et se retourner face au gardien dans un espace réduit'},
+        {id:'ap_t4',name:'Remise / déviation partenaire',desc:'Jouer en pivot pour servir un milieu en cours de course ou dévier vers un ailier'},
+        {id:'ap_t5',name:'Protection de balle (dos au but)',desc:'Tenir le ballon sous la pression physique des DC en attendant un soutien'},
+        {id:'ap_t6',name:'Dribble en 1v1 face au gardien',desc:'Éliminer le gardien sorti ou trouver la solution technique en situation de face-à-face'}
+      ],
+      phy: [
+        {id:'ap_p1',name:'Puissance & présence physique',desc:'Dominer les DC dans les duels de surface, ne pas se laisser bousculer ni écarter'},
+        {id:'ap_p2',name:'Explosivité (démarrage)',desc:'Prendre le dessus sur le défenseur dans le premier mètre pour se créer l\'espace'},
+        {id:'ap_p3',name:'Résistance aux contacts DC',desc:'Encaisser les charges répétées et maintenir sa qualité d\'action sur 90 min'},
+        {id:'ap_p4',name:'Vitesse sur appel en profondeur',desc:'Partir derrière la ligne défensive et distancer le DC sur une longue balle'},
+        {id:'ap_p5',name:'Détente verticale (jeu de tête)',desc:'Sauter plus haut que le DC pour dominer les situations aériennes en surface'},
+        {id:'ap_p6',name:'Endurance & pressing offensif',desc:'Maintenir un pressing constant sur les DC et GK pour provoquer des erreurs'}
+      ],
+      tac: [
+        {id:'ap_c1',name:'Appel & timing hors-jeu',desc:'Partir au dernier moment pour exploiter la profondeur sans tomber en position irrégulière'},
+        {id:'ap_c2',name:'Fixation des DC (créer du jeu)',desc:'Attirer deux défenseurs pour libérer des espaces pour les milieux et ailiers'},
+        {id:'ap_c3',name:'Décrochage pour jeu en pivot',desc:'Décrocher vers le milieu pour recevoir et jouer en remise, puis repartir en profondeur'},
+        {id:'ap_c4',name:'Lecture des centres & corners',desc:'Se placer au bon endroit dans la surface selon le type de centre ou de coup de pied arrêté'},
+        {id:'ap_c5',name:'Pressing offensif sur les DC',desc:'Fermer les DC adverses dans leur relance pour forcer l\'erreur ou la longue balle'},
+        {id:'ap_c6',name:'Mouvement sans ballon',desc:'Créer des espaces par des courses leurres même quand le ballon ne vient pas'}
+      ],
+      men: [
+        {id:'ap_m1',name:'Sang-froid devant le gardien',desc:'Garder son calme dans les face-à-face et les situations de finition à bout portant'},
+        {id:'ap_m2',name:'Rebond après occasion ratée',desc:'Se remettre immédiatement dans le match après un but raté sans perdre en intensité'},
+        {id:'ap_m3',name:'Appétit du but (instinct)',desc:'Être toujours orienté vers le but, chercher en permanence la situation de frappe'},
+        {id:'ap_m4',name:'Résistance à la sécheresse',desc:'Maintenir son niveau d\'implication et de confiance lors d\'une série de matchs sans but'},
+        {id:'ap_m5',name:'Leadership offensif',desc:'Organiser le pressing, mobiliser les partenaires, être le référent de la ligne d\'attaque'},
+        {id:'ap_m6',name:'Concentration sur chaque action',desc:'Rester attentif à chaque déplacement car l\'occasion peut arriver à tout moment'}
+      ]
+    },
+    yesi: [
+      {lettre:'Y',couleur:'var(--gold)',bg:'rgba(201,168,76,0.05)',titre:'Yes Attitude',sous:'Se lever après chaque occasion ratée',texte:'L\'attaquant ratera des buts. La <strong style="color:#111;">Yes Attitude</strong>, c\'est lever la tête 30 secondes après avoir raté un pénalty, redemander le ballon après un contrôle raté, et rester dans la surface adverse même quand le match ne tourne pas.'},
+      {lettre:'E',couleur:'#5B9BD5',bg:'rgba(91,155,213,0.05)',titre:'Estime de Soi',sous:'Connaître son type de finisseur',texte:'Est-il un attaquant de surface qui vit dans les 6 mètres ? Un pivot ? Un finisseur en mouvement ? L\'<strong style="color:#111;">Estime de Soi</strong>, c\'est identifier son profil de buteur et se mettre dans les positions où il est le plus efficace.'},
+      {lettre:'S',couleur:'#2ECC71',bg:'rgba(46,204,113,0.05)',titre:'Smart Goals',sous:'Au-delà du but marqué',texte:'Ses <strong style="color:#111;">Smart Goals</strong> : <strong style="color:#111;">nombre d\'appels créant un espace, duels de tête gagnés, remises pour les partenaires, frappes cadrées, pressing offensif déclenché.</strong> Ces indicateurs lui permettent de rester précieux même dans les matchs sans but.'},
+      {lettre:'I',couleur:'#E74C3C',bg:'rgba(231,76,60,0.05)',titre:'Investissement',sous:'Travailler ce que les autres ne voient pas',texte:'L\'<strong style="color:#111;">Investissement</strong>, c\'est répéter les finitions après l\'entraînement, travailler le jeu de tête sur corners, analyser les placements des DC adverses avant chaque match.'}
+    ]
+  }
+};
+
+// ─── STATE ───────────────────────────────────────────────────────────────
+let currentPoste = null;
+let evalState = {};
+let trimState = { 1:{}, 2:{}, 3:{} };
+const CATS = ['tech','phy','tac','men'];
+const CAT_TAGS = { tech:'tag-tech', phy:'tag-phy', tac:'tag-tac', men:'tag-men' };
+const CAT_IDS  = { tech:'catTech',  phy:'catPhy',  tac:'catTac',  men:'catMen'  };
+const CAT_COUNTS = { tech:'techCount', phy:'phyCount', tac:'tacCount', men:'menCount' };
+
+// ─── STORAGE ─────────────────────────────────────────────────────────────
+function getPlayers() {
+  return JSON.parse(localStorage.getItem('yesi_players') || '[]');
+}
+function savePlayers(players) {
+  localStorage.setItem('yesi_players', JSON.stringify(players));
+}
+
+// ─── LOGIN ───────────────────────────────────────────────────────────────
+document.getElementById('codeInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+  document.getElementById('loginError').textContent = '';
+});
+
+function handleLogin() {
+  const code = document.getElementById('codeInput').value.trim().toUpperCase();
+  if (!code) return;
+
+  if (code === ADMIN_CODE) {
+    showScreen('admin');
+    renderAdmin();
+    return;
+  }
+
+  const players = getPlayers();
+  const player = players.find(p => p.code.toUpperCase() === code);
+
+  if (player) {
+    loadFiche(player.poste, player.name);
+    showScreen('fiche');
+  } else {
+    document.getElementById('loginError').textContent = 'Code invalide — vérifiez auprès de votre coach.';
+    document.getElementById('codeInput').value = '';
+  }
+}
+
+function showAdminLogin() {
+  const code = prompt('Code administrateur :');
+  if (code && code.trim().toUpperCase() === ADMIN_CODE) {
+    showScreen('admin');
+    renderAdmin();
+  }
+}
+
+// ─── SCREENS ─────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function logout() {
+  document.getElementById('codeInput').value = '';
+  document.getElementById('loginError').textContent = '';
+  currentPoste = null;
+  evalState = {};
+  trimState = { 1:{}, 2:{}, 3:{} };
+  showScreen('login');
+}
+
+// ─── LOAD FICHE ──────────────────────────────────────────────────────────
+function loadFiche(poste, playerName) {
+  currentPoste = poste;
+  const meta = POSTES_META[poste];
+  const data = QUALITES_DATA[poste];
+
+  // Header
+  document.getElementById('posteBadge').innerHTML = `<span>${meta.emoji}</span> ${meta.badge}`;
+  const parts = meta.label.split(' ');
+  document.getElementById('ficheTitle').innerHTML = parts[0] + ' <em>' + parts.slice(1).join(' ') + '</em>';
+  document.getElementById('ficheSub').textContent = 'Référentiel des qualités — ' + meta.abbr;
+  document.getElementById('evalSub').textContent = meta.label + ' — Évaluation individuelle';
+  document.getElementById('evalScoreLabel').textContent = 'Score Global — ' + meta.abbr;
+  document.getElementById('suiviSub').textContent = 'Auto-évaluation trimestrielle — ' + meta.abbr;
+  if (playerName) document.getElementById('evalNom').value = playerName;
+
+  // Intro
+  document.getElementById('ficheIntro').textContent = data.intro;
+
+  // Ref grid
+  const catNames = { tech:'Technique', phy:'Physique', tac:'Tactique', men:'Mental' };
+  document.getElementById('ficheRefGrid').innerHTML = CATS.map(cat => `
+    <div class="ref-card">
+      <div class="ref-card-title ${cat}">${catNames[cat]}</div>
+      ${data.qualites[cat].map(q => `<div class="ref-item">${q.name}</div>`).join('')}
+    </div>
+  `).join('');
+
+  // YESI
+  document.getElementById('ficheYesi').innerHTML = data.yesi.map(ax => `
+    <div class="yesi-block">
+      <div class="yesi-header" style="background:${ax.bg};">
+        <div class="yesi-lettre" style="color:${ax.couleur};">${ax.lettre}</div>
+        <div class="yesi-title-wrap">
+          <div class="yesi-title" style="color:${ax.couleur};">${ax.titre}</div>
+          <div class="yesi-sous">${ax.sous}</div>
+        </div>
+      </div>
+      <div class="yesi-text">${ax.texte}</div>
+    </div>
+  `).join('');
+
+  // Init eval state
+  evalState = {};
+  trimState = { 1:{}, 2:{}, 3:{} };
+  CATS.forEach(cat => {
+    data.qualites[cat].forEach(q => {
+      evalState[q.id] = { validated:false, note:5 };
+      [1,2,3].forEach(t => { trimState[t][q.id] = { trend:null, newNote:null }; });
+    });
+  });
+
+  renderEval();
+  renderTrims();
+  document.getElementById('evalDate').value = new Date().toISOString().slice(0,10);
+
+  // Reset nav
+  document.querySelectorAll('.nav-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  document.querySelectorAll('.fiche-page').forEach((p,i) => p.classList.toggle('active', i===0));
+}
+
+// ─── EVAL ────────────────────────────────────────────────────────────────
+function renderEval() {
+  const data = QUALITES_DATA[currentPoste];
+  CATS.forEach(cat => {
+    const container = document.getElementById('qualites' + cat.charAt(0).toUpperCase() + cat.slice(1));
+    container.innerHTML = '';
+    data.qualites[cat].forEach(q => {
+      const card = document.createElement('div');
+      card.className = 'quality-card';
+      card.id = 'card-' + q.id;
+      card.innerHTML = `
+        <div class="card-top">
+          <button class="validate-btn" onclick="toggleValidate('${q.id}')">✓</button>
+          <div class="card-info">
+            <div class="card-name">${q.name}</div>
+            <div class="card-desc">${q.desc}</div>
+          </div>
+          <div class="card-tag ${CAT_TAGS[cat]}">${cat.charAt(0).toUpperCase()+cat.slice(1)}</div>
+        </div>
+        <div class="note-row">
+          <div class="note-label">Note</div>
+          <div class="slider-wrap"><input type="range" min="1" max="10" value="5" id="slider-${q.id}" oninput="updateNote('${q.id}',this.value)"></div>
+          <div class="note-value" id="noteVal-${q.id}">5</div>
+        </div>`;
+      container.appendChild(card);
+    });
+  });
+  updateScores();
+}
+
+function toggleValidate(id) {
+  evalState[id].validated = !evalState[id].validated;
+  document.getElementById('card-' + id).classList.toggle('validated', evalState[id].validated);
+  updateScores();
+}
+
+function updateNote(id, val) {
+  evalState[id].note = parseInt(val);
+  document.getElementById('noteVal-' + id).textContent = val;
+  updateScores();
+}
+
+function updateScores() {
+  const data = QUALITES_DATA[currentPoste];
+  let totalSum = 0, totalCount = 0;
+  CATS.forEach(cat => {
+    const items = data.qualites[cat];
+    const validated = items.filter(q => evalState[q.id] && evalState[q.id].validated);
+    const count = validated.length;
+    const sum = validated.reduce((acc, q) => acc + evalState[q.id].note, 0);
+    const avg = count > 0 ? (sum / count).toFixed(1) : '—';
+    document.getElementById(CAT_IDS[cat]).textContent = avg;
+    document.getElementById(CAT_COUNTS[cat]).textContent = count + '/' + items.length;
+    if (count > 0) { totalSum += parseFloat(avg); totalCount++; }
+  });
+  const global = totalCount > 0 ? (totalSum / totalCount).toFixed(1) : '0';
+  document.getElementById('scoreGlobal').textContent = global;
+  document.getElementById('scoreBar').style.width = (parseFloat(global) * 10) + '%';
+}
+
+// ─── SUIVI ────────────────────────────────────────────────────────────────
+function renderTrims() {
+  const data = QUALITES_DATA[currentPoste];
+  [1,2,3].forEach(t => {
+    const grid = document.getElementById('trim' + t + 'Grid');
+    grid.innerHTML = '';
+    CATS.forEach(cat => {
+      data.qualites[cat].forEach(q => {
+        const row = document.createElement('div');
+        row.className = 'auto-item';
+        const prev = t === 1 ? evalState[q.id].note : getPrevNote(t, q.id);
+        row.innerHTML = `
+          <div class="auto-item-name">${q.name}</div>
+          <div class="auto-item-prev">${prev}</div>
+          <div class="trend-btns">
+            <button class="trend-btn up" onclick="setTrend(${t},'${q.id}','up',this)">↑</button>
+            <button class="trend-btn equal" onclick="setTrend(${t},'${q.id}','equal',this)">→</button>
+            <button class="trend-btn down" onclick="setTrend(${t},'${q.id}','down',this)">↓</button>
+          </div>
+          <div class="auto-new-note" id="new-t${t}-${q.id}">—</div>`;
+        grid.appendChild(row);
+      });
+    });
+  });
+}
+
+function getPrevNote(t, id) {
+  if (t === 2) return trimState[1][id] && trimState[1][id].newNote !== null ? trimState[1][id].newNote : (evalState[id] ? evalState[id].note : 5);
+  if (t === 3) return trimState[2][id] && trimState[2][id].newNote !== null ? trimState[2][id].newNote : getPrevNote(2, id);
+  return evalState[id] ? evalState[id].note : 5;
+}
+
+function setTrend(t, id, trend, btn) {
+  btn.closest('.auto-item').querySelectorAll('.trend-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const prev = parseInt(getPrevNote(t, id));
+  let newNote = prev;
+  if (trend === 'up') newNote = Math.min(10, prev + 1);
+  if (trend === 'down') newNote = Math.max(1, prev - 1);
+  trimState[t][id] = { trend, newNote };
+  document.getElementById('new-t' + t + '-' + id).textContent = newNote;
+}
+
+function toggleTrim(t) {
+  const body = document.getElementById('trim' + t + 'Body');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveTrim(t) {
+  const badge = document.getElementById('trim' + t + 'Badge');
+  badge.textContent = '✓ Validé';
+  badge.style.background = 'rgba(46,204,113,0.15)';
+  badge.style.color = '#2ECC71';
+  if (t < 3) renderTrims();
+  updateCompare();
+  showToast('Trimestre ' + t + ' enregistré ✓');
+}
+
+function updateCompare() {
+  document.getElementById('compareBlock').style.display = 'block';
+  const rows = document.getElementById('compareRows');
+  rows.innerHTML = '';
+  const data = QUALITES_DATA[currentPoste];
+  const allQ = [...data.qualites.tech, ...data.qualites.phy, ...data.qualites.tac, ...data.qualites.men].slice(0, 8);
+  allQ.forEach(q => {
+    const n0 = evalState[q.id] ? evalState[q.id].note : 5;
+    const n1 = trimState[1][q.id] && trimState[1][q.id].newNote !== null ? trimState[1][q.id].newNote : n0;
+    const n2 = trimState[2][q.id] && trimState[2][q.id].newNote !== null ? trimState[2][q.id].newNote : n1;
+    const n3 = trimState[3][q.id] && trimState[3][q.id].newNote !== null ? trimState[3][q.id].newNote : n2;
+    const row = document.createElement('div');
+    row.className = 'compare-row';
+    row.innerHTML = `
+      <div class="compare-name">${q.name.slice(0,14)}…</div>
+      <div class="compare-bars">
+        <div class="compare-bar bar-t1" style="width:${n1*8}px;"></div>
+        <div class="compare-bar bar-t2" style="width:${n2*8}px;"></div>
+        <div class="compare-bar bar-t3" style="width:${n3*8}px;"></div>
+      </div>
+      <div class="compare-vals">
+        <div class="compare-val v1">${n1}</div>
+        <div class="compare-val v2">${n2}</div>
+        <div class="compare-val v3">${n3}</div>
+      </div>`;
+    rows.appendChild(row);
+  });
+}
+
+// ─── NAV FICHE ───────────────────────────────────────────────────────────
+function showFichePage(page, e) {
+  document.querySelectorAll('.fiche-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('fiche-' + page).classList.add('active');
+  if (e && e.target) e.target.classList.add('active');
+  if (page === 'suivi') renderTrims();
+}
+
+// ─── ADMIN ───────────────────────────────────────────────────────────────
+function renderAdmin() {
+  const players = getPlayers();
+  const postes = [...new Set(players.map(p => p.poste))];
+
+  document.getElementById('statTotal').textContent = players.length;
+  document.getElementById('statPostes').textContent = postes.length;
+  document.getElementById('statActifs').textContent = players.length;
+
+  const list = document.getElementById('playersList');
+  if (players.length === 0) {
+    list.innerHTML = '<div class="empty-state">Aucun joueur enregistré.<br>Créez votre premier accès ci-dessus.</div>';
+    return;
+  }
+
+  list.innerHTML = players.map((p, i) => `
+    <div class="player-card">
+      <div class="player-poste-badge">${POSTES_META[p.poste] ? POSTES_META[p.poste].abbr : p.poste}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name}</div>
+        <div class="player-meta">${POSTES_META[p.poste] ? POSTES_META[p.poste].label : p.poste} · créé le ${p.date}</div>
+      </div>
+      <div class="player-code">${p.code}</div>
+      <button class="btn-delete" onclick="deletePlayer(${i})" title="Supprimer">✕</button>
+    </div>
+  `).join('');
+}
+
+function createPlayer() {
+  const name = document.getElementById('newPlayerName').value.trim();
+  const code = document.getElementById('newPlayerCode').value.trim().toUpperCase();
+  const poste = document.getElementById('newPlayerPoste').value;
+
+  if (!name || !code || !poste) {
+    showToast('Remplissez tous les champs ✕');
+    return;
+  }
+
+  if (code === ADMIN_CODE) {
+    showToast('Ce code est réservé ✕');
+    return;
+  }
+
+  const players = getPlayers();
+  if (players.find(p => p.code.toUpperCase() === code)) {
+    showToast('Ce code existe déjà ✕');
+    return;
+  }
+
+  const today = new Date().toLocaleDateString('fr-FR');
+  players.push({ name, code, poste, date: today });
+  savePlayers(players);
+
+  document.getElementById('newPlayerName').value = '';
+  document.getElementById('newPlayerCode').value = '';
+  document.getElementById('newPlayerPoste').value = '';
+
+  renderAdmin();
+  showToast('Accès créé pour ' + name + ' ✓');
+}
+
+function deletePlayer(index) {
+  const players = getPlayers();
+  const player = players[index];
+  if (!confirm('Supprimer l\'accès de ' + player.name + ' (' + player.code + ') ?')) return;
+  players.splice(index, 1);
+  savePlayers(players);
+  renderAdmin();
+  showToast('Accès supprimé ✓');
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────
+showScreen('login');
+</script>
+</body>
+</html>
