@@ -834,12 +834,22 @@ const CAT_TAGS = { tech:'tag-tech', phy:'tag-phy', tac:'tag-tac', men:'tag-men' 
 const CAT_IDS  = { tech:'catTech',  phy:'catPhy',  tac:'catTac',  men:'catMen'  };
 const CAT_COUNTS = { tech:'techCount', phy:'phyCount', tac:'tacCount', men:'menCount' };
 
-// ─── STORAGE ─────────────────────────────────────────────────────────────
-function getPlayers() {
-  return JSON.parse(localStorage.getItem('yesi_players') || '[]');
-}
-function savePlayers(players) {
-  localStorage.setItem('yesi_players', JSON.stringify(players));
+// ─── GOOGLE SHEETS ───────────────────────────────────────────────────────
+const SHEET_ID = '1fEUowabO9SZ06fa9Xk9bQsqZ3m-r-f-96lPp6VGcEbc';
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+async function fetchPlayers() {
+  try {
+    const res = await fetch(SHEET_URL);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+    return rows.map(row => ({
+      name: row.c[0] ? row.c[0].v : '',
+      code: row.c[1] ? String(row.c[1].v).trim().toUpperCase() : '',
+      poste: row.c[2] ? String(row.c[2].v).trim() : ''
+    })).filter(p => p.code && p.poste);
+  } catch(e) { return []; }
 }
 
 // ─── LOGIN ───────────────────────────────────────────────────────────────
@@ -848,7 +858,7 @@ document.getElementById('codeInput').addEventListener('keydown', e => {
   document.getElementById('loginError').textContent = '';
 });
 
-function handleLogin() {
+async function handleLogin() {
   const code = document.getElementById('codeInput').value.trim().toUpperCase();
   if (!code) return;
 
@@ -858,8 +868,15 @@ function handleLogin() {
     return;
   }
 
-  const players = getPlayers();
-  const player = players.find(p => p.code.toUpperCase() === code);
+  const btn = document.querySelector('.btn-login');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  const players = await fetchPlayers();
+  const player = players.find(p => p.code === code);
+
+  btn.textContent = 'ACCÉDER →';
+  btn.disabled = false;
 
   if (player) {
     loadFiche(player.poste, player.name);
@@ -1112,73 +1129,43 @@ function showFichePage(page, e) {
 
 // ─── ADMIN ───────────────────────────────────────────────────────────────
 function renderAdmin() {
-  const players = getPlayers();
-  const postes = [...new Set(players.map(p => p.poste))];
-
-  document.getElementById('statTotal').textContent = players.length;
-  document.getElementById('statPostes').textContent = postes.length;
-  document.getElementById('statActifs').textContent = players.length;
-
-  const list = document.getElementById('playersList');
-  if (players.length === 0) {
-    list.innerHTML = '<div class="empty-state">Aucun joueur enregistré.<br>Créez votre premier accès ci-dessus.</div>';
-    return;
-  }
-
-  list.innerHTML = players.map((p, i) => `
-    <div class="player-card">
-      <div class="player-poste-badge">${POSTES_META[p.poste] ? POSTES_META[p.poste].abbr : p.poste}</div>
-      <div class="player-info">
-        <div class="player-name">${p.name}</div>
-        <div class="player-meta">${POSTES_META[p.poste] ? POSTES_META[p.poste].label : p.poste} · créé le ${p.date}</div>
+  const adminBody = document.querySelector('.admin-body');
+  adminBody.innerHTML = `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--gold);margin-bottom:12px;">📋 GÉRER LES JOUEURS</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;">
+        Les accès joueurs sont gérés depuis ta <strong style="color:var(--text);">Google Sheet</strong>.<br>
+        Ajoute ou supprime une ligne = actif immédiatement.
       </div>
-      <div class="player-code">${p.code}</div>
-      <button class="btn-delete" onclick="deletePlayer(${i})" title="Supprimer">✕</button>
+      <div style="background:var(--input-bg);border-radius:8px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Structure de la Sheet</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">A — nom<br><span style="color:var(--muted);font-weight:400;">Kais Lfareh</span></div>
+          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">B — code<br><span style="color:var(--gold);font-weight:400;">KAIS25</span></div>
+          <div style="background:var(--white);border-radius:6px;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--text);">C — poste<br><span style="color:var(--muted);font-weight:400;">DC</span></div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">
+        <strong style="color:var(--text);">Codes postes valides :</strong><br>
+        DC · LAT · MDef · MRel · MC · Ailier · AP
+      </div>
+      <a href="https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit" target="_blank"
+        style="display:block;width:100%;padding:14px;background:var(--gold);color:#111;border:none;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;text-align:center;text-decoration:none;">
+        OUVRIR LA GOOGLE SHEET →
+      </a>
     </div>
-  `).join('');
-}
 
-function createPlayer() {
-  const name = document.getElementById('newPlayerName').value.trim();
-  const code = document.getElementById('newPlayerCode').value.trim().toUpperCase();
-  const poste = document.getElementById('newPlayerPoste').value;
-
-  if (!name || !code || !poste) {
-    showToast('Remplissez tous les champs ✕');
-    return;
-  }
-
-  if (code === ADMIN_CODE) {
-    showToast('Ce code est réservé ✕');
-    return;
-  }
-
-  const players = getPlayers();
-  if (players.find(p => p.code.toUpperCase() === code)) {
-    showToast('Ce code existe déjà ✕');
-    return;
-  }
-
-  const today = new Date().toLocaleDateString('fr-FR');
-  players.push({ name, code, poste, date: today });
-  savePlayers(players);
-
-  document.getElementById('newPlayerName').value = '';
-  document.getElementById('newPlayerCode').value = '';
-  document.getElementById('newPlayerPoste').value = '';
-
-  renderAdmin();
-  showToast('Accès créé pour ' + name + ' ✓');
-}
-
-function deletePlayer(index) {
-  const players = getPlayers();
-  const player = players[index];
-  if (!confirm('Supprimer l\'accès de ' + player.name + ' (' + player.code + ') ?')) return;
-  players.splice(index, 1);
-  savePlayers(players);
-  renderAdmin();
-  showToast('Accès supprimé ✓');
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--text);margin-bottom:12px;">🔗 LIEN À PARTAGER</div>
+      <div style="background:var(--input-bg);border-radius:8px;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--text);word-break:break-all;margin-bottom:10px;">
+        ${window.location.href.split('?')[0]}
+      </div>
+      <button onclick="navigator.clipboard.writeText('${window.location.href.split('?')[0]}').then(()=>showToast('Lien copié ✓'))"
+        style="width:100%;padding:10px;background:var(--text);color:#fff;border:none;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;cursor:pointer;">
+        COPIER LE LIEN
+      </button>
+    </div>
+  `;
 }
 
 // ─── TOAST ───────────────────────────────────────────────────────────────
